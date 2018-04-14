@@ -47,8 +47,94 @@ public class Main {
 //        for(String word: phoneWords("3727265")) {
 //            System.out.println(word);
 //        }
-        System.out.println(encodeString("aabbcddde"));
+//        System.out.println(encodeString("aabbcddde"));
+//        int[] a = {1,5,7,12,18,32};
+//        int[] b = {2,4,9,16,27,76,98};
+//        int[] c = mergeArrays(a,b);
+//
+//        for(int i=0;i<c.length;i++) {
+//            System.out.println(c[i]);
+//        }
 
+        int[] a = {5, 2, 5, 1, 6, 9, 3, -9, 299, 4888, 2999};
+        int[] b = sortIntegers(a);
+        for(int i=0;i<b.length;i++) {
+            System.out.println(b[i]);
+        }
+    }
+
+    public static int[] sortIntegers(int[] a) {
+        boolean swapped;
+
+        do {
+            swapped = false;
+            for (int i = 0; i < a.length - 1; i++) {
+                if (a[i] > a[i + 1]) {
+                    int temp = a[i];
+                    a[i] = a[i + 1];
+                    a[i + 1] = temp;
+                    swapped = true;
+                }
+            }
+        } while(swapped);
+
+        return a;
+    }
+
+    public static int[] mergeArrays(int[] a, int[] b) {
+        int[] c = new int[a.length + b.length];
+        int cpos = 0, apos = 0, bpos = 0;
+
+        while (cpos < c.length) {
+            if (apos == a.length) {
+                c[cpos] = b[bpos];
+                bpos++;
+            }
+            else if (bpos == b.length) {
+                c[cpos] = a[apos];
+                apos++;
+            }
+            else if (a[apos] < b[bpos]) {
+                c[cpos] = a[apos];
+                apos++;
+            } else if (b[bpos] < a[apos]){
+                c[cpos] = b[bpos];
+                bpos++;
+            } else if (a[apos] == b[bpos]) {
+                c[cpos] = a[apos];
+                apos++;
+                cpos++;
+                c[cpos] = b[bpos];
+                bpos++;
+            }
+
+            cpos++;
+        }
+
+
+        return c;
+    }
+
+    public static char maxRepeatingCharacter(String s) {
+        char[] c = s.toCharArray();
+
+        int count = 1;
+        int maxCount = 1;
+        char max = c[0];
+
+        for(int i=1; i<c.length; i++) {
+            if(c[i] == c[i - 1]) {
+                count++;
+            } else {
+                if(count > maxCount) {
+                    maxCount = count;
+                    max = c[i - 1];
+                }
+                count = 1;
+            }
+        }
+
+        return max;
     }
 
     public static class TwoNumbers{
