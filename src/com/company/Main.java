@@ -56,12 +56,35 @@ public class Main {
 //            System.out.println(c[i]);
 //        }
 
-        int[] a = {5, 2, 5, 1, 6, 9, 3, -9, 299, 4888, 2999};
-        int[] b = sortIntegers(a);
-        for(int i=0;i<b.length;i++) {
-            System.out.println(b[i]);
-        }
+//        int[] a = {5, 2, 5, 1, 6, 9, 3, -9, 299, 4888, 2999};
+//        int[] b = sortIntegers(a);
+//        for(int i=0;i<b.length;i++) {
+//            System.out.println(b[i]);
+//        }
+
+//        int[] inputValues = {10, 2, 3, 7, 11, 15};
+        int[] inputValues = {5, 2, 5, 1, 6, 9, 3, -9, 299, 4888, 2999};
+        int inputTarget = 3004;
+        int[] answer = indecesSumToTarget(inputValues, inputTarget);
+        System.out.printf("first: %d second: %d", answer[0], answer[1]);
     }
+
+    public static int[] indecesSumToTarget(int[] values, int target) {
+        int[] indeces = new int[2];
+
+        for( int i=0; i < values.length; i++) {
+            for( int j=i+1; j < values.length; j++) {
+                if( values[i] + values[j] == target) {
+                    indeces[0] = i;
+                    indeces[1] = j;
+                    break;
+                }
+            }
+        }
+
+        return indeces;
+    }
+
 
     public static int[] sortIntegers(int[] a) {
         boolean swapped;
