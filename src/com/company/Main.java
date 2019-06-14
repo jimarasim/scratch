@@ -3,6 +3,8 @@ package com.company;
 import java.lang.reflect.Array;
 import java.util.*;
 
+import static com.company.Animal.numberOfAnimals;
+
 public class Main {
 
     public static void main(String[] args) throws Exception {
@@ -47,7 +49,7 @@ public class Main {
 //        for(String word: phoneWords("3727265")) {
 //            System.out.println(word);
 //        }
-//        System.out.println(encodeString("aabbcddde"));
+//        System.out.println(encodeString2("aabbcaaa  dddeee"));
 //        int[] a = {1,5,7,12,18,32};
 //        int[] b = {2,4,9,16,27,76,98};
 //        int[] c = mergeArrays(a,b);
@@ -63,28 +65,137 @@ public class Main {
 //        }
 
 //        int[] inputValues = {10, 2, 3, 7, 11, 15};
-        int[] inputValues = {5, 2, 5, 1, 6, 9, 3, -9, 299, 4888, 2999};
-        int inputTarget = 3004;
-        int[] answer = indecesSumToTarget(inputValues, inputTarget);
-        System.out.printf("first: %d second: %d", answer[0], answer[1]);
+//        int[] inputValues = {1, 2, 5, 3, 4, 5, 2, 6};
+//        int inputTarget = 11;
+//        int[] answer = indecesSumToTarget2(inputValues, inputTarget);
+//        System.out.printf("first: %d second: %d", answer[0], answer[1]);
+
+//        System.out.println(stringInReverse("this is a string"));
+
+//        List<Integer> ages = new ArrayList<>();
+//        ages.add(4);
+//        ages.add(18);
+//        ages.add(18);
+//        ages.add(18);
+//        ages.add(18);
+//        List<Integer> result = secret_napoleon(4, ages, 60);
+//        System.out.println(result.get(0));
+//        System.out.println(result.get(1));
+//        System.out.println(result.get(2));
+//        System.out.println(result.get(3));
+
+//        Animal animal = new Cat();
+//        Animal animal2 = new Kangaroo();
+//        List<Animal> zoo = new ArrayList<>();
+//        zoo.add(animal);
+//        zoo.add(animal2);
+//        System.out.println(animal.makeNoise());
+//        System.out.println(animal.numberOfLegs());
+//        for(Animal type: zoo) {
+//            if (type instanceof Cat) {
+//                System.out.println("I LOVE KITTIES");
+//            } else {
+//                System.out.println("this is a:" + type.getClass().getName() + " out of " + numberOfAnimals);
+//            }
+//        }
+
+        PhoneWordCombos pwc = phoneWordsByHash("2063727265");
+        for(String area:pwc.areaCode) {
+            System.out.println(area);
+        }
+        for(String prefix:pwc.prefix) {
+            System.out.println(prefix);
+        }
+        for(String suffix:pwc.suffix) {
+            System.out.println(suffix);
+        }
+
     }
+
+    public static List<Integer> secret_napoleon(int players, List<Integer> ages, int time) {
+        List<Integer> returnList = new ArrayList<Integer>();
+        List<Integer> exception = new ArrayList<Integer>();
+        exception.add(-1);
+
+        // Write your code here
+        if (players < 4 || players > 27) {
+            return exception;
+        }
+
+        int bonapartists = (int) Math.floor(players / 2);
+        int royalists = (int) Math.ceil((players - bonapartists) / 3);
+        int coalitionists = players - bonapartists - royalists;
+        int napoleon = 0;
+
+        for(int i=0;i<players;i++) {
+            if (ages.get(i) > 18) {
+                napoleon = 1;
+            }
+        }
+
+        if (Math.abs(royalists - bonapartists) <= 3 && napoleon != 0) {
+            napoleon = 4;
+        } else if (Math.abs(royalists - bonapartists) > 3 && napoleon != 0) {
+            napoleon = 5;
+        }
+
+        if(royalists > 0) {
+            if (coalitionists % royalists == 0 && napoleon != 0) {
+                napoleon--;
+            }
+        }
+
+        if (players % 2 != 0 && napoleon != 0) {
+            napoleon++;
+        }
+
+        if (time < 120 && napoleon != 0) {
+            napoleon = 3;
+        }
+
+        returnList.add(bonapartists);
+        returnList.add(royalists);
+        returnList.add(coalitionists);
+        returnList.add(napoleon);
+
+        return returnList;
+
+    }
+
 
     public static int[] indecesSumToTarget(int[] values, int target) {
         int[] indeces = new int[2];
+        boolean found = false;
 
         for( int i=0; i < values.length; i++) {
             for( int j=i+1; j < values.length; j++) {
                 if( values[i] + values[j] == target) {
                     indeces[0] = i;
                     indeces[1] = j;
+                    found = true;
                     break;
                 }
             }
+            if(found) break;
         }
 
         return indeces;
     }
 
+    public static int[] indecesSumToTarget2(int[] values, int target) {
+        int[] indeces = new int[2];
+        HashMap<Integer, Integer> hm = new HashMap<>();
+        for(int i=0; i<values.length; i++) {
+            if(hm.containsKey(values[i])) {
+                indeces[0] = hm.get(values[i]);
+                indeces[1] = i;
+                break;
+            } else {
+                hm.put(target-values[i], i);
+            }
+        }
+        return indeces;
+    }
 
     public static int[] sortIntegers(int[] a) {
         boolean swapped;
@@ -469,6 +580,83 @@ public class Main {
         return words;
     }
 
+    private static class PhoneWordCombos {
+        public List<String> areaCode = new ArrayList<>();
+        public List<String> prefix = new ArrayList<>();
+        public List<String> suffix = new ArrayList<>();
+    }
+
+    private static PhoneWordCombos phoneWordsByHash(String phoneNumber) throws Exception {
+        if(phoneNumber.length() != 10) {
+            throw new Exception("ENTER 10 DIGIT PHONE NUMBER");
+        }
+
+        char[] digits = phoneNumber.toCharArray();
+
+        Map<Character,String> keyLetters = new HashMap<>();
+        keyLetters.put('1',"1");
+        keyLetters.put('2',"ABC");
+        keyLetters.put('3',"DEF");
+        keyLetters.put('4',"GHI");
+        keyLetters.put('5',"JKL");
+        keyLetters.put('6',"MNO");
+        keyLetters.put('7',"PQRS");
+        keyLetters.put('8',"TUV");
+        keyLetters.put('9',"WXYZ");
+        keyLetters.put('0',"0");
+
+        String a = keyLetters.get(phoneNumber.charAt(0));
+        String b = keyLetters.get(phoneNumber.charAt(1));
+        String c = keyLetters.get(phoneNumber.charAt(2));
+
+        String d = keyLetters.get(phoneNumber.charAt(3));
+        String e = keyLetters.get(phoneNumber.charAt(4));
+        String f = keyLetters.get(phoneNumber.charAt(5));
+
+        String g = keyLetters.get(phoneNumber.charAt(6));
+        String h = keyLetters.get(phoneNumber.charAt(7));
+        String i = keyLetters.get(phoneNumber.charAt(8));
+        String j = keyLetters.get(phoneNumber.charAt(9));
+
+        if(a==null || b==null || c==null || d==null || e==null || f==null || g==null || h==null || i==null || j==null ) {
+            throw new Exception("ENTER 10 DIGIT PHONE NUMBER. A DIGIT PROVIDED WAS NOT A NUMBER");
+        }
+
+        PhoneWordCombos pwc = new PhoneWordCombos();
+
+        for(int aa=0;aa<a.length();aa++) {
+            for(int bb=0;bb<b.length();bb++) {
+                for(int cc=0;cc<c.length();cc++) {
+                    String combo = Character.toString(a.charAt(aa)) + Character.toString(b.charAt(bb)) + Character.toString(c.charAt(cc));
+                    pwc.areaCode.add(combo);
+                }
+            }
+        }
+
+        for(int dd=0;dd<d.length();dd++) {
+            for(int ee=0;ee<e.length();ee++) {
+                for(int ff=0;ff<f.length();ff++) {
+                    String combo = Character.toString(d.charAt(dd)) + Character.toString(e.charAt(ee)) + Character.toString(f.charAt(ff));
+                    pwc.prefix.add(combo);
+                }
+            }
+        }
+
+        for(int gg=0;gg<g.length();gg++) {
+            for(int hh=0;hh<h.length();hh++) {
+                for(int ii=0;ii<i.length();ii++) {
+                    for(int jj=0;jj<j.length();jj++) {
+                        String combo = Character.toString(g.charAt(gg)) + Character.toString(h.charAt(hh)) + Character.toString(i.charAt(ii))+ Character.toString(j.charAt(jj));
+                        pwc.suffix.add(combo);
+                    }
+                }
+            }
+        }
+
+        return pwc;
+
+    }
+
     private static String encodeString(String stringToEncode) {
         String encodedString = "";
 
@@ -493,5 +681,64 @@ public class Main {
         return encodedString;
     }
 
+    private static class Entry {
+        private char c;
+        private int i;
+
+        public Entry(char c, int i) {
+            this.c = c;
+            this.i = i;
+        }
+
+        public char getC() {
+            return c;
+        }
+
+        public int getI() {
+            return i;
+        }
+
+        public void setI(int i) {
+            this.i = i;
+        }
+
+        public void increment() {
+            this.i++;
+        }
+    }
+
+    private static String encodeString2(String stringToEncode) {
+        StringBuilder encodedString = new StringBuilder();
+        List<Entry> encoding = new ArrayList<>();
+
+        encoding.add(new Entry(stringToEncode.charAt(0),1));
+
+        for(int i=1; i<stringToEncode.length();i++) {
+            if(stringToEncode.charAt(i) == encoding.get(encoding.size()-1).getC()) {
+                encoding.get(encoding.size()-1).increment();
+            } else {
+                encoding.add(new Entry(stringToEncode.charAt(i),1));
+            }
+        }
+
+        for(Entry entry:encoding) {
+            encodedString.append(entry.getC());
+            if(entry.getI() > 1) {
+                encodedString.append(entry.getI());
+            }
+        }
+
+        return encodedString.toString();
+    }
+
+    private static String stringInReverse(String string) {
+        String reverse = "";
+
+        for(int i=string.length()-1;i>=0;i--) {
+            reverse += string.charAt(i);
+        }
+
+        return reverse;
+    }
 
 }
